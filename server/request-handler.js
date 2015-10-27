@@ -53,7 +53,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify("Hello, World!"));
+  response.end(JSON.stringify({}));
 
   if (response.url === '/1/classes/chatterbox') {
     console.log("hi");
