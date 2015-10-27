@@ -13,7 +13,7 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var requestHandler = function(request, response) {
-  console.log("request url", request.url)
+// var utils = require('utils');
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -33,24 +33,6 @@ var requestHandler = function(request, response) {
 
   // The outgoing status.
   var statusCode = 200;
-
-  console.log("request URL true?",request.url === '/classes/room1')
-  if(request.method === 'POST' && request.url === '/classes/messages') {
-    statusCode = 201;
-  } else if(request.method === 'POST' && request.url === '/classes/room1') {
-    // console.log("post in classes/room1")
-    statusCode = 201;
-  } else {
-    statusCode = 404;
-  }
-
-  if(request.method === 'GET' && request.url === '/classes/messages') {
-    statusCode = 200;
-  } else if(request.method === 'GET' && request.url === '/classes/room1') {
-    statusCode = 200;
-  } else {
-    statusCode = 404;
-  }
 
   //console.log(request._postData);
 
@@ -79,10 +61,66 @@ var requestHandler = function(request, response) {
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
   // up in the browser.
+
+  if (request.method === 'POST') {
+    var body = '';
+    request.on('data', function(chunk) {
+      body += chunk.toString();
+    });
+
+    if (request.url === '/classes/messages' || request.url === '/classes/room1'){
+      statusCode = 201;
+    } else {
+      statusCode = 404;
+    };
+    // var stringify = querystring.stringify(body);
+    // console.log("parsedBody",parsedBody);
+    // console.log('stringify', stringify);
+
+    // console.log("body results", JSON.parse(body).results);
+
+    request.on('end', function(){
+    // var parsedBody = JSON.parse(body);
+    // console.log("parsedBody", parsedBody);
+      response.writeHead(statusCode, headers);
+      response.write(body, function(){
+        response.end(JSON.stringify({results:[]}));
+      });
+
+    });
+  }
+  
+  if (request.method === 'GET') {
+    if(request.url === '/classes/messages' || request.url === '/classes/room1') {
+      statusCode = 200;
+    } else {
+      statusCode = 404;
+    }
+    response.writeHead(statusCode, headers);
+    response.end(JSON.stringify({results:[]}));
+  }
+
+  console.log("request URL true?",request.url === '/classes/room1')
+  // if(request.method === 'POST' && request.url === '/classes/messages') {
+  //   statusCode = 201;
+  // } else if(request.method === 'POST' && request.url === '/classes/room1') {
+  //   // console.log("post in classes/room1")
+  //   statusCode = 201;
+  // } else {
+  //   statusCode = 404;
+  // }
+
+  // if(request.method === 'GET' && request.url === '/classes/messages') {
+  //   statusCode = 200;
+  // } else if(request.method === 'GET' && request.url === '/classes/room1') {
+  //   statusCode = 200;
+  // } else {
+  //   statusCode = 404;
+  // }
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify({results:[]}));
+  // response.end(JSON.stringify({results:[]}));
 
   if (response.url === '/1/classes/chatterbox') {
     console.log("hi");
