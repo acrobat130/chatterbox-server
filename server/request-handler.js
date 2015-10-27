@@ -30,8 +30,37 @@ var requestHandler = function(request, response) {
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
 
+
   // The outgoing status.
   var statusCode = 200;
+
+  console.log("request URL true?",request.url === '/classes/room1')
+  if(request.method === 'POST' && request.url === '/classes/messages') {
+    statusCode = 201;
+  } else if(request.method === 'POST' && request.url === '/classes/room1') {
+    // console.log("post in classes/room1")
+    statusCode = 201;
+  } else {
+    statusCode = 404;
+  }
+
+  if(request.method === 'GET' && request.url === '/classes/messages') {
+    statusCode = 200;
+  } else if(request.method === 'GET' && request.url === '/classes/room1') {
+    statusCode = 200;
+  } else {
+    statusCode = 404;
+  }
+
+  //console.log(request._postData);
+
+  // if(request.method === 'GET' && request.url === '/classes/room1') {
+  //   statusCode = 201;
+  // } 
+
+  // if(request.method === 'POST' && request.url !== '/classes/messages') {
+  //   statusCode = 404;
+  // }
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
