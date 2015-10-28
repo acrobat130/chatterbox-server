@@ -34,7 +34,8 @@ var requestHandler = function(request, response) {
   // The outgoing status.
   var statusCode = 200;
 
-  //console.log(request._postData);
+  // console.log("request post data", request._postData);
+
 
   // if(request.method === 'GET' && request.url === '/classes/room1') {
   //   statusCode = 201;
@@ -51,53 +52,75 @@ var requestHandler = function(request, response) {
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "application/json";
+  
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  // response.writeHead(statusCode, headers);
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
   // up in the browser.
+  var resultsObject = {results: []};
+  // console.log("resultsObject", resultsObject);
+
+
 
   if (request.method === 'POST') {
     var body = '';
     request.on('data', function(chunk) {
       body += chunk.toString();
+      console.log("chunk", chunk);
+      console.log("chunk to string", chunk.toString());
     });
 
     if (request.url === '/classes/messages' || request.url === '/classes/room1'){
       statusCode = 201;
+      // if(request._postData !== undefined) {
+      // }
     } else {
       statusCode = 404;
     };
+     // JSON.parse(res._data).results;
     // var stringify = querystring.stringify(body);
     // console.log("parsedBody",parsedBody);
     // console.log('stringify', stringify);
-
-    // console.log("body results", JSON.parse(body).results);
+    // JSON.parse(body).results
+    // console.log("body results", body);
 
     request.on('end', function(){
     // var parsedBody = JSON.parse(body);
     // console.log("parsedBody", parsedBody);
       response.writeHead(statusCode, headers);
       response.write(body, function(){
-        response.end(JSON.stringify({results:[]}));
+        resultsObject.results.push(JSON.parse(body)); // {results:[]}
+        // console.log('resultsObject', resultsObject);
+        // console.log('results Object[0]', resultsObject.results[0]);
+        response.end(JSON.stringify(resultsObject));
       });
+      // console.log("body", body);
 
     });
+    // console.log("body", body)
   }
   
   if (request.method === 'GET') {
     if(request.url === '/classes/messages' || request.url === '/classes/room1') {
       statusCode = 200;
-    } else {
+    } else {  
       statusCode = 404;
     }
-    response.writeHead(statusCode, headers);
-    response.end(JSON.stringify({results:[]}));
+    // request.on('end', function(){
+      console.log("resultsObject", resultsObject);
+      response.writeHead(statusCode, headers);
+      response.end(JSON.stringify(resultsObject));
+      
+    // })
+  }
+
+  if (request.method === 'OPTIONS') {
+
   }
 
   console.log("request URL true?",request.url === '/classes/room1')
@@ -141,7 +164,8 @@ var defaultCorsHeaders = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
   "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
+  "access-control-max-age": 10, // Seconds.
+  "Content-Type": "application/json"
 };
 
 exports.requestHandler = requestHandler;
