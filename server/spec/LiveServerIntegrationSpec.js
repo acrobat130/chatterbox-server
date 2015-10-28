@@ -57,13 +57,14 @@ describe('server', function() {
     };
 
     request(requestParams, function(error, response, body) {
-      console.log("hiiiii")
+      console.log("body in spec", body);
       // Now if we request the log, that message we posted should be there:
       request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
           var messages = JSON.parse(body).results;
+          console.log('body in spec again', body);
+          console.log('JSON.parse(body)', JSON.parse(body));
+          console.log('JSON.parse(body).results', messages);
           expect(messages[0].username).to.equal('Jono');
-          console.log("body in spec", body);
-          // console.log(messages);
           expect(messages[0].message).to.equal('Do my bidding!');
           done();
         });

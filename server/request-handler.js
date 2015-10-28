@@ -72,7 +72,7 @@ var requestHandler = function(request, response) {
     request.on('data', function(chunk) {
       body += chunk.toString();
       console.log("chunk", chunk);
-      console.log("chunk to string", chunk.toString());
+      console.log("chunk to string", chunk.toString()); // {'username': 'Jono' , 'message': 'Do my bidding'}
     });
 
     if (request.url === '/classes/messages' || request.url === '/classes/room1'){
@@ -94,9 +94,9 @@ var requestHandler = function(request, response) {
     // console.log("parsedBody", parsedBody);
       response.writeHead(statusCode, headers);
       response.write(body, function(){
-        resultsObject.results.push(JSON.parse(body)); // {results:[]}
+        resultsObject.results.push(JSON.parse(body)); 
         // console.log('resultsObject', resultsObject);
-        // console.log('results Object[0]', resultsObject.results[0]);
+        console.log('results Object[0].username', JSON.stringify(resultsObject.results[0].username));
         response.end(JSON.stringify(resultsObject));
       });
       // console.log("body", body);
@@ -112,7 +112,7 @@ var requestHandler = function(request, response) {
       statusCode = 404;
     }
     // request.on('end', function(){
-      console.log("resultsObject", resultsObject);
+      // console.log("resultsObject", resultsObject);
       response.writeHead(statusCode, headers);
       response.end(JSON.stringify(resultsObject));
       
